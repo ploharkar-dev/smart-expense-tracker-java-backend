@@ -2,10 +2,11 @@ package com.prl.smartexpensetracker.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @Entity
 @Table(name = "users")
@@ -42,6 +43,13 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Category> categories;
+    
+    @Builder.Default
+    @ElementCollection
+    @CollectionTable(name = "user_properties", joinColumns = @JoinColumn(name = "user_id"))
+    @MapKeyColumn(name = "property_key")
+    @Column(name = "property_value")
+    private Map<String, String> properties = new HashMap<>();
 
     @PrePersist
     protected void onCreate() {

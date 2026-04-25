@@ -10,6 +10,9 @@ import com.prl.smartexpensetracker.exception.ResourceNotFoundException;
 import com.prl.smartexpensetracker.repository.UserRepository;
 import com.prl.smartexpensetracker.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +57,7 @@ public class AuthService {
         User user = User.builder()
                 .username(registerRequest.getUsername())
                 .email(registerRequest.getEmail())
+                .properties(Map.of("monthlyBudget", "10000"))
                 .passwordHash(passwordEncoder.encode(registerRequest.getPassword()))
                 .build();
 
@@ -98,6 +102,7 @@ public class AuthService {
                 .token(token)
                 .username(user.getUsername())
                 .userId(user.getUserId())
+                .properties(user.getProperties())
                 .message("Login successful")
                 .build();
     }
