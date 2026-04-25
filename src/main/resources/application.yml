@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: smartexpensetracker
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/smartexpensetracker?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+    username: root
+    password: Omkar@909
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        generate_statistics: false
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+jwt:
+  secret: smartexpensetracker-secret-key-2024-spring-boot-jwt-authentication
+  expiration: 86400000
+
+logging:
+  level:
+    root: INFO
+    com.prl.smartexpensetracker: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
