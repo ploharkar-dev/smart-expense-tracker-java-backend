@@ -1,20 +1,25 @@
 package com.prl.smartexpensetracker.service;
 
-import com.prl.smartexpensetracker.dto.LoginRequest;
-import com.prl.smartexpensetracker.dto.LoginResponse;
-import com.prl.smartexpensetracker.dto.RegisterRequest;
-import com.prl.smartexpensetracker.dto.RegisterResponse;
-import com.prl.smartexpensetracker.entity.User;
-import com.prl.smartexpensetracker.exception.InvalidInputException;
-import com.prl.smartexpensetracker.exception.ResourceNotFoundException;
-import com.prl.smartexpensetracker.repository.UserRepository;
-import com.prl.smartexpensetracker.util.JwtTokenProvider;
-import lombok.RequiredArgsConstructor;
-
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.prl.smartexpensetracker.dto.LoginRequest;
+import com.prl.smartexpensetracker.dto.LoginResponse;
+import com.prl.smartexpensetracker.dto.RegisterRequest;
+import com.prl.smartexpensetracker.dto.RegisterResponse;
+import com.prl.smartexpensetracker.entity.Category;
+import com.prl.smartexpensetracker.entity.User;
+import com.prl.smartexpensetracker.exception.InvalidInputException;
+import com.prl.smartexpensetracker.exception.ResourceNotFoundException;
+import com.prl.smartexpensetracker.repository.UserRepository;
+import com.prl.smartexpensetracker.repository.CategoryRepository;
+import com.prl.smartexpensetracker.util.JwtTokenProvider;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +28,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final CategoryRepository categoryRepository;
 
     /**
      * Register a new user.
@@ -62,6 +68,8 @@ public class AuthService {
                 .build();
 
         User savedUser = userRepository.save(user);
+        
+        createDefaultCategories(savedUser);
 
         return RegisterResponse.builder()
                 .userId(savedUser.getUserId())
@@ -127,5 +135,53 @@ public class AuthService {
     public User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+    
+    private void createDefaultCategories(User user) {
+        List<Category> categories = List.of(
+                Category.builder()
+                        .categoryName("Food & Dining")
+                        .description("Food expenses")
+                        .createdAt(LocalDateTime.now())
+                        .user(user)
+                        .build(),
+
+                Category.builder()
+                        .categoryName("Travel")
+                        .description("Travel expenses")
+                        .createdAt(LocalDateTime.now())
+                        .user(user)
+                        .build(),
+
+                Category.builder()
+                        .categoryName("Utilities")
+                        .description("Bills")
+                        .createdAt(LocalDateTime.now())
+                        .user(user)
+                        .build(),
+
+                Category.builder()
+                        .categoryName("Entertainment")
+                        .description("Fun")
+                        .createdAt(LocalDateTime.now())
+                        .user(user)
+                        .build(),
+
+                Category.builder()
+                        .categoryName("Shopping")
+                        .description("Shopping")
+                        .createdAt(LocalDateTime.now())
+                        .user(user)
+                        .build(),
+
+                Category.builder()
+                        .categoryName("Other")
+                        .description("Other")
+                        .createdAt(LocalDateTime.now())
+                        .user(user)
+                        .build()
+        );
+
+        categoryRepository.saveAll(categories);
     }
 }
