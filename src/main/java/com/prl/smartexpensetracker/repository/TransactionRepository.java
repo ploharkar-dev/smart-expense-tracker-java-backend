@@ -5,10 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Modifying;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+
+import jakarta.transaction.Transactional;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
@@ -21,11 +24,15 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             LocalDate endDate
     );
 
-    // ✅ FIXED HERE
     List<Transaction> findByUserUserIdAndCategoryCategoryId(
             Long userId,
             Long categoryId
     );
+    
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Transaction t WHERE t.user.userId = :userId")
+    void deleteAllByUserId(Long userId);
 
     @Query("""
         SELECT SUM(t.amount)

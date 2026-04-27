@@ -159,4 +159,8 @@ public class PredictionService {
                 .confidenceScore(prediction.getConfidenceScore())
                 .build();
     }
+    
+    public int deletePredictionsByUserId(Long userId) {
+        return predictionRepository.deleteByUserId(userId);
+    }
 }

@@ -204,4 +204,8 @@ public class TransactionService {
                 .txnDate(transaction.getTxnDate())
                 .build();
     }
+    
+    public void deleteAllTransactionsByUserId(Long userId) {
+        transactionRepository.deleteAllByUserId(userId);
+    }
 }

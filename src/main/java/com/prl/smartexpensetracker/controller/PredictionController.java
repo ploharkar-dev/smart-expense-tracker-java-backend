@@ -42,4 +42,10 @@ public class PredictionController {
         BigDecimal prediction = predictionService.predictNextMonthSpending(userId);
         return ResponseEntity.ok(Map.of("userId", userId, "predictedAmount", prediction));
     }
+    
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<String> deleteByUser(@PathVariable Long userId) {
+        int count = predictionService.deletePredictionsByUserId(userId);
+        return ResponseEntity.ok(count + " predictions deleted for userId: " + userId);
+    }
 }

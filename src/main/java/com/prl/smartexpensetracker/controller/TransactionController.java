@@ -68,4 +68,10 @@ public class TransactionController {
         java.math.BigDecimal spending = transactionService.getMonthlySpending(userId, year, month);
         return ResponseEntity.ok(Map.of("userId", userId, "year", year, "month", month, "spending", spending));
     }
+    
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<String> deleteAllByUser(@PathVariable Long userId) {
+        transactionService.deleteAllTransactionsByUserId(userId);
+        return ResponseEntity.ok("All transactions deleted for userId: " + userId);
+    }
 }
