@@ -1,24 +1,22 @@
 package com.prl.smartexpensetracker.service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import com.prl.smartexpensetracker.dto.TransactionDTO;
-import com.prl.smartexpensetracker.entity.Category;
 import com.prl.smartexpensetracker.entity.Transaction;
 import com.prl.smartexpensetracker.entity.User;
 import com.prl.smartexpensetracker.exception.InvalidInputException;
 import com.prl.smartexpensetracker.exception.ResourceNotFoundException;
-import com.prl.smartexpensetracker.repository.CategoryRepository;
 import com.prl.smartexpensetracker.repository.TransactionRepository;
 import com.prl.smartexpensetracker.repository.UserRepository;
 import com.prl.smartexpensetracker.util.CategoryClassifier;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +24,6 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
-    private final CategoryRepository categoryRepository;
     private final CategoryClassifier categoryClassifier;
 
     /**
@@ -48,14 +45,9 @@ public class TransactionService {
         User user = userRepository.findById(transactionDTO.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Find or create category
-        Category category = categoryRepository.findById(transactionDTO.getCategoryId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-
         // Create transaction
         Transaction transaction = Transaction.builder()
                 .user(user)
-                .category(category)
                 .amount(transactionDTO.getAmount())
                 .description(transactionDTO.getDescription())
                 .txnDate(transactionDTO.getTxnDate())
@@ -69,8 +61,6 @@ public class TransactionService {
         return TransactionDTO.builder()
                 .txnId(savedTransaction.getTxnId())
                 .userId(savedTransaction.getUser().getUserId())
-                .categoryId(savedTransaction.getCategory().getCategoryId())
-                .categoryName(savedTransaction.getCategory().getCategoryName())
                 .amount(savedTransaction.getAmount())
                 .description(savedTransaction.getDescription())
                 .txnDate(savedTransaction.getTxnDate())
@@ -135,11 +125,6 @@ public class TransactionService {
         if (transactionDTO.getTxnDate() != null) {
             transaction.setTxnDate(transactionDTO.getTxnDate());
         }
-        if (transactionDTO.getCategoryId() != null) {
-            Category category = categoryRepository.findById(transactionDTO.getCategoryId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-            transaction.setCategory(category);
-        }
 
         Transaction updatedTransaction = transactionRepository.save(transaction);
         return convertToDTO(updatedTransaction);
@@ -197,8 +182,6 @@ public class TransactionService {
         return TransactionDTO.builder()
                 .txnId(transaction.getTxnId())
                 .userId(transaction.getUser().getUserId())
-                .categoryId(transaction.getCategory().getCategoryId())
-                .categoryName(transaction.getCategory().getCategoryName())
                 .amount(transaction.getAmount())
                 .description(transaction.getDescription())
                 .txnDate(transaction.getTxnDate())

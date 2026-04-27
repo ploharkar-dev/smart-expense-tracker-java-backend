@@ -74,7 +74,6 @@ public class ReportService {
 
                 row.createCell(0).setCellValue(t.getTxnId());
                 row.createCell(1).setCellValue(t.getAmount().doubleValue());
-                row.createCell(2).setCellValue(t.getCategory().getCategoryName());
                 row.createCell(3).setCellValue(t.getDescription());
 
                 Cell dateCell = row.createCell(4);
@@ -148,7 +147,6 @@ public class ReportService {
         for (Transaction t : transactions) {
             table.addCell(String.valueOf(t.getTxnId()));
             table.addCell("₹" + t.getAmount());
-            table.addCell(t.getCategory().getCategoryName());
             table.addCell(t.getDescription() != null ? t.getDescription() : "N/A");
             table.addCell(t.getTxnDate().toString());
         }
